@@ -13,7 +13,7 @@ Inspect the target app's `package.json`, lockfile, Expo configuration, native di
 - Reanimated, Worklets, Gesture Handler, Screens, Safe Area Context, and modal or sheet libraries.
 - React Compiler status and platform-specific files.
 
-Use `scripts/detect-environment.mjs --root <app>` to seed this inventory. Verify values the script cannot derive.
+Use `node scripts/detect-environment.ts --root <app>` to seed this inventory. Verify values the script cannot derive.
 
 ## Navigation proof
 

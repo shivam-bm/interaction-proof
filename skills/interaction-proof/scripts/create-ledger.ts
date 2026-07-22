@@ -2,9 +2,9 @@
 
 const args = process.argv.slice(2);
 
-const readArg = (name, fallback) => {
+const readArg = (name: string, fallback: string): string => {
   const index = args.indexOf(name);
-  return index === -1 ? fallback : args[index + 1];
+  return index === -1 ? fallback : (args[index + 1] ?? fallback);
 };
 
 const scopes = new Set(["interaction", "surface", "journey", "release"]);
@@ -30,7 +30,7 @@ if (!new Set(["json", "markdown"]).has(output)) {
   process.exit(1);
 }
 
-const domains = [
+const domains: ReadonlyArray<readonly [string, string]> = [
   ["task", "Task completion and consequence clarity"],
   ["navigation", "Navigation, hierarchy, deep links, and restoration"],
   ["gesture", "Direct manipulation, cancellation, and gesture conflicts"],
@@ -61,7 +61,7 @@ if (output === "json") {
   process.exit(0);
 }
 
-const escapeCell = (value) => String(value).replaceAll("|", "\\|");
+const escapeCell = (value: string): string => value.replaceAll("|", "\\|");
 const rows = ledger
   .map(
     (entry) =>

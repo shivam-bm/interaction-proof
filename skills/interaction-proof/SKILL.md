@@ -48,7 +48,7 @@ State the person, task, target, expected behavior, boundaries, and requested sco
 
 ## 2. Pin the environment
 
-Record the code revision, app version, framework versions, platform, OS, device, build type, refresh rate, data state, network state, locale, appearance, and accessibility settings. Run `scripts/detect-environment.mjs --root <target>` for file-backed stack detection; add `--probe-tools` only when local tool versions matter.
+Record the code revision, app version, framework versions, platform, OS, device, build type, refresh rate, data state, network state, locale, appearance, and accessibility settings. Run `node scripts/detect-environment.ts --root <target>` for file-backed stack detection; add `--probe-tools` only when local tool versions matter.
 
 Choose the target proof rung before testing. Record unavailable tools or hardware as blockers.
 
@@ -56,7 +56,7 @@ Choose the target proof rung before testing. Record unavailable tools or hardwar
 
 ## 3. Build the ledger
 
-Run `scripts/create-ledger.mjs --scope <scope> --surface <name> --platform <platform> --output markdown` as a starting point. Replace generic rows with the real interactions and states in scope. Select device and state combinations by risk, not convenience.
+Run `node scripts/create-ledger.ts --scope <scope> --surface <name> --platform <platform> --output markdown` as a starting point. Replace generic rows with the real interactions and states in scope. Select device and state combinations by risk, not convenience.
 
 **Complete when:** every in-scope interaction has an entry state, action, feedback, completion, cancellation, recovery, accessibility alternative, and applicable environment conditions—or an explicit reason that a field does not apply.
 
@@ -66,7 +66,7 @@ Inspect the real implementation and installed dependency source before theorizin
 
 Prefer synthetic accounts and redact evidence before saving or sharing it.
 
-**Complete when:** every ledger row has observed evidence at the claimed rung or a concrete blocker; no runtime pass rests on source evidence alone.
+**Complete when:** every ledger row has observed evidence at the claimed rung or a concrete blocker; no runtime pass rests on source evidence alone. Run `node scripts/redact-evidence.ts <artifact>` before sharing text evidence that may contain secrets or personal data.
 
 ## 5. Stress the interaction
 
@@ -78,7 +78,7 @@ For a release scope, include the oldest supported environment, smallest layout, 
 
 ## 6. Issue the verdict
 
-Write the report using [verdict-format.md](references/verdict-format.md). Grade severity from impact, reach, reproducibility, and confidence. Keep measurements and interpretation distinct. Run `scripts/validate-verdict.mjs <report.json>` for structured reports.
+Write the report using [verdict-format.md](references/verdict-format.md). Grade severity from impact, reach, reproducibility, and confidence. Keep measurements and interpretation distinct. Run `node scripts/validate-verdict.ts <report.json>` for structured reports.
 
 **Complete when:** every verdict names its proof rung and artifact, every failure is reproducible, every blocker names what would unblock it, the structured report validates, and no claim exceeds its evidence.
 

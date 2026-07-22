@@ -25,7 +25,9 @@ test("skill frontmatter is model-invoked and minimal", () => {
 
 test("every local markdown context pointer resolves", () => {
   const skill = readFileSync(skillPath, "utf8");
-  const targets = [...skill.matchAll(/\]\(([^)]+\.md)\)/gu)].map((match) => match[1]);
+  const targets = [...skill.matchAll(/\]\(([^)]+\.md)\)/gu)].flatMap((match) =>
+    match[1] ? [match[1]] : []
+  );
   assert.ok(targets.length >= 8);
   for (const target of targets) {
     assert.equal(existsSync(path.resolve(skillRoot, target)), true, target);
@@ -40,10 +42,10 @@ test("agent metadata mentions the skill explicitly", () => {
 
 test("required deterministic scripts are present", () => {
   for (const script of [
-    "create-ledger.mjs",
-    "detect-environment.mjs",
-    "redact-evidence.mjs",
-    "validate-verdict.mjs",
+    "create-ledger.ts",
+    "detect-environment.ts",
+    "redact-evidence.ts",
+    "validate-verdict.ts",
   ]) {
     assert.equal(existsSync(path.join(skillRoot, "scripts", script)), true, script);
   }

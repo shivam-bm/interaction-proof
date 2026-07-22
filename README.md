@@ -41,11 +41,12 @@ Version `0.1.0` is intended for internal use and public evaluation. Apple platfo
 ## Validate
 
 ```bash
+npm ci
 npm test
 python3 /path/to/skill-creator/scripts/quick_validate.py skills/interaction-proof
 ```
 
-The repository tests the deterministic scripts, skill structure, reference pointers, and seeded verdict fixtures.
+The repository type-checks and tests the TypeScript utilities, skill structure, reference pointers, and seeded verdict fixtures. Direct TypeScript execution requires Node.js 22.18 or newer.
 
 ## Privacy
 

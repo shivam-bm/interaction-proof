@@ -2,15 +2,20 @@
 
 import { readFileSync } from "node:fs";
 
+type JsonObject = Record<string, unknown>;
+
+const isObject = (value: unknown): value is JsonObject =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
 const reportPath = process.argv[2];
 if (!reportPath) {
-  process.stderr.write("Usage: validate-verdict.mjs <report.json>\n");
+  process.stderr.write("Usage: validate-verdict.ts <report.json>\n");
   process.exit(1);
 }
 
-let report;
+let parsedReport: unknown;
 try {
-  report = JSON.parse(readFileSync(reportPath, "utf8"));
+  parsedReport = JSON.parse(readFileSync(reportPath, "utf8")) as unknown;
 } catch (error) {
   process.stderr.write(
     `Unable to read report: ${error instanceof Error ? error.message : String(error)}\n`
@@ -18,24 +23,30 @@ try {
   process.exit(1);
 }
 
-const errors = [];
+if (!isObject(parsedReport)) {
+  process.stderr.write("Unable to read report: root value must be an object\n");
+  process.exit(1);
+}
+
+const report = parsedReport;
+const errors: string[] = [];
 const statuses = [
   "PASS",
   "FAIL",
   "BLOCKED",
   "NOT_APPLICABLE",
   "HUMAN_STUDY_REQUIRED",
-];
-const proofLevels = ["SOURCE", "RUN", "DEVICE", "TRACE", "FIELD"];
+] as const;
+const proofLevels = ["SOURCE", "RUN", "DEVICE", "TRACE", "FIELD"] as const;
 const runtimeProof = new Set(["RUN", "DEVICE", "TRACE", "FIELD"]);
 const claimTypes = new Set(["source", "runtime", "human"]);
 const confidences = new Set(["high", "medium", "low"]);
 const severities = new Set(["BLOCKER", "HIGH", "MEDIUM", "LOW"]);
 const scopes = new Set(["interaction", "surface", "journey", "release"]);
 
-const requireString = (value, path) => {
+const requireString = (value: unknown, propertyPath: string): void => {
   if (typeof value !== "string" || value.trim() === "") {
-    errors.push(`${path} must be a non-empty string`);
+    errors.push(`${propertyPath} must be a non-empty string`);
   }
 };
 
@@ -43,103 +54,125 @@ if (report.version !== "1.0") {
   errors.push('version must equal "1.0"');
 }
 
-if (!report.audit || typeof report.audit !== "object") {
+const audit = report.audit;
+if (!isObject(audit)) {
   errors.push("audit must be an object");
 } else {
-  if (!scopes.has(report.audit.scope)) {
+  if (!scopes.has(String(audit.scope))) {
     errors.push("audit.scope must be interaction, surface, journey, or release");
   }
-  requireString(report.audit.target, "audit.target");
-  if (!proofLevels.includes(report.audit.proofTarget)) {
+  requireString(audit.target, "audit.target");
+  if (!proofLevels.includes(audit.proofTarget as (typeof proofLevels)[number])) {
     errors.push("audit.proofTarget must be a proof ladder value");
   }
 }
 
-if (!report.environment || typeof report.environment !== "object") {
+const environment = report.environment;
+if (!isObject(environment)) {
   errors.push("environment must be an object");
 } else {
   for (const field of ["platform", "device", "osVersion", "buildType", "revision"]) {
-    requireString(report.environment[field], `environment.${field}`);
+    requireString(environment[field], `environment.${field}`);
   }
 }
 
-if (!Array.isArray(report.ledger) || report.ledger.length === 0) {
+const ledger = Array.isArray(report.ledger) ? report.ledger : [];
+if (ledger.length === 0) {
   errors.push("ledger must contain at least one claim");
 }
 
-const counts = Object.fromEntries(statuses.map((status) => [status, 0]));
-const seenIds = new Set();
+const counts: Record<(typeof statuses)[number], number> = {
+  PASS: 0,
+  FAIL: 0,
+  BLOCKED: 0,
+  NOT_APPLICABLE: 0,
+  HUMAN_STUDY_REQUIRED: 0,
+};
+const seenIds = new Set<unknown>();
 
-for (const [index, entry] of (report.ledger ?? []).entries()) {
+for (const [index, rawEntry] of ledger.entries()) {
   const prefix = `ledger[${index}]`;
+  const entry = isObject(rawEntry) ? rawEntry : {};
   requireString(entry.id, `${prefix}.id`);
   if (seenIds.has(entry.id)) {
     errors.push(`${prefix}.id must be unique`);
   }
   seenIds.add(entry.id);
 
-  if (!claimTypes.has(entry.claimType)) {
+  if (!claimTypes.has(String(entry.claimType))) {
     errors.push(`${prefix}.claimType must be source, runtime, or human`);
   }
   for (const field of ["claim", "expected", "observed", "environmentId"]) {
     requireString(entry[field], `${prefix}.${field}`);
   }
-  if (!statuses.includes(entry.status)) {
+
+  const status = entry.status;
+  if (!statuses.includes(status as (typeof statuses)[number])) {
     errors.push(`${prefix}.status is invalid`);
   } else {
-    counts[entry.status] += 1;
+    counts[status as (typeof statuses)[number]] += 1;
   }
-  if (!proofLevels.includes(entry.proofLevel)) {
+
+  const proofLevel = entry.proofLevel;
+  if (!proofLevels.includes(proofLevel as (typeof proofLevels)[number])) {
     errors.push(`${prefix}.proofLevel is invalid`);
   }
-  if (!confidences.has(entry.confidence)) {
+  if (!confidences.has(String(entry.confidence))) {
     errors.push(`${prefix}.confidence must be high, medium, or low`);
   }
   if (!Array.isArray(entry.reproduction) || entry.reproduction.length === 0) {
     errors.push(`${prefix}.reproduction must contain at least one step`);
   }
 
-  if (new Set(["PASS", "FAIL"]).has(entry.status)) {
-    if (!Array.isArray(entry.evidence) || entry.evidence.length === 0) {
-      errors.push(`${prefix}.evidence is required for ${entry.status}`);
-    }
+  if ((status === "PASS" || status === "FAIL") &&
+      (!Array.isArray(entry.evidence) || entry.evidence.length === 0)) {
+    errors.push(`${prefix}.evidence is required for ${status}`);
   }
-  if (entry.claimType === "runtime" && entry.status === "PASS" && !runtimeProof.has(entry.proofLevel)) {
+  if (
+    entry.claimType === "runtime" &&
+    status === "PASS" &&
+    !runtimeProof.has(String(proofLevel))
+  ) {
     errors.push(`${prefix} cannot pass a runtime claim at SOURCE proof`);
   }
-  if (entry.claimType === "human" && entry.status !== "HUMAN_STUDY_REQUIRED") {
+  if (entry.claimType === "human" && status !== "HUMAN_STUDY_REQUIRED") {
     errors.push(`${prefix} human claims must use HUMAN_STUDY_REQUIRED`);
   }
-  if (entry.status === "FAIL" && !severities.has(entry.severity)) {
+  if (status === "FAIL" && !severities.has(String(entry.severity))) {
     errors.push(`${prefix}.severity is required for failures`);
   }
-  if (entry.status === "BLOCKED") {
+  if (status === "BLOCKED") {
     requireString(entry.blocker, `${prefix}.blocker`);
   }
-  if (entry.status === "NOT_APPLICABLE") {
+  if (status === "NOT_APPLICABLE") {
     requireString(entry.reason, `${prefix}.reason`);
   }
-  if (entry.status === "HUMAN_STUDY_REQUIRED") {
+  if (status === "HUMAN_STUDY_REQUIRED") {
     requireString(entry.studyQuestion, `${prefix}.studyQuestion`);
   }
 }
 
-if (!report.summary || typeof report.summary !== "object") {
+const summary = report.summary;
+if (!isObject(summary)) {
   errors.push("summary must be an object");
 } else {
   for (const status of statuses) {
-    if (report.summary[status] !== counts[status]) {
+    if (summary[status] !== counts[status]) {
       errors.push(`summary.${status} must equal ${counts[status]}`);
     }
   }
 }
 
 if (errors.length > 0) {
-  process.stderr.write(`INVALID verdict (${errors.length} issue${errors.length === 1 ? "" : "s"})\n`);
+  process.stderr.write(
+    `INVALID verdict (${errors.length} issue${errors.length === 1 ? "" : "s"})\n`
+  );
   for (const error of errors) {
     process.stderr.write(`- ${error}\n`);
   }
   process.exit(1);
 }
 
-process.stdout.write(`VALID verdict (${report.ledger.length} claim${report.ledger.length === 1 ? "" : "s"})\n`);
+process.stdout.write(
+  `VALID verdict (${ledger.length} claim${ledger.length === 1 ? "" : "s"})\n`
+);

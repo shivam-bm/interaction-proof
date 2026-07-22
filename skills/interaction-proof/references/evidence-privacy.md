@@ -18,7 +18,7 @@ Collect the smallest artifact that proves the claim.
 
 ## Before sharing or committing
 
-Run `scripts/redact-evidence.mjs <text-file>` for text evidence, then inspect the result manually. Redaction is a safety net, not proof that content is safe.
+Run `node scripts/redact-evidence.ts <text-file>` for text evidence, then inspect the result manually. Redaction is a safety net, not proof that content is safe.
 
 For images and video, blur or crop sensitive regions with an approved tool while preserving the behavior under test. Keep originals only when required and authorized.
 

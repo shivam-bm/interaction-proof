@@ -60,4 +60,4 @@ Use JSON with this shape:
 
 For `FAIL`, add `severity`. For `BLOCKED`, add `blocker`. For `NOT_APPLICABLE`, add `reason`. For `HUMAN_STUDY_REQUIRED`, add `studyQuestion`.
 
-Run `scripts/validate-verdict.mjs <report.json>` before delivery. The validator checks evidence/outcome compatibility and summary counts; it does not certify that an artifact is truthful.
+Run `node scripts/validate-verdict.ts <report.json>` before delivery. The validator checks evidence/outcome compatibility and summary counts; it does not certify that an artifact is truthful.

@@ -6,22 +6,40 @@ import path from "node:path";
 
 const args = process.argv.slice(2);
 
-const readArg = (name, fallback) => {
-  const index = args.indexOf(name);
-  return index === -1 ? fallback : args[index + 1];
+type PackageManifest = {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  name?: string;
+  optionalDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
 };
 
-const hasFlag = (name) => args.includes(name);
+type EnvironmentResult = {
+  configFiles: string[];
+  packageName: string;
+  packagePath: string | null;
+  revision: string;
+  root: string;
+  tools?: Record<string, string>;
+  versions: Record<string, string>;
+};
 
-const readJson = (filePath) => {
+const readArg = (name: string, fallback: string): string => {
+  const index = args.indexOf(name);
+  return index === -1 ? fallback : (args[index + 1] ?? fallback);
+};
+
+const hasFlag = (name: string): boolean => args.includes(name);
+
+const readJson = (filePath: string): PackageManifest | { error: string } => {
   try {
-    return JSON.parse(readFileSync(filePath, "utf8"));
+    return JSON.parse(readFileSync(filePath, "utf8")) as PackageManifest;
   } catch (error) {
     return { error: error instanceof Error ? error.message : String(error) };
   }
 };
 
-const findNearestPackage = (startPath) => {
+const findNearestPackage = (startPath: string): string | null => {
   let current = path.resolve(startPath);
   while (true) {
     const candidate = path.join(current, "package.json");
@@ -36,7 +54,7 @@ const findNearestPackage = (startPath) => {
   }
 };
 
-const probe = (command, commandArgs) => {
+const probe = (command: string, commandArgs: string[]): string => {
   try {
     return execFileSync(command, commandArgs, {
       encoding: "utf8",
@@ -99,7 +117,7 @@ const configCandidates = [
   "android/app/build.gradle",
 ];
 
-const result = {
+const result: EnvironmentResult = {
   root,
   packagePath,
   packageName:
