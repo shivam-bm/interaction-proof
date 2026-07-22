@@ -13,7 +13,7 @@ npx skills add https://github.com/shivam-bm/interaction-proof --skill interactio
 Then ask:
 
 ```text
-Use $interaction-proof to audit this drawer on iOS.
+Use $interaction-proof to test the whole app end to end.
 ```
 
 ## What it audits
