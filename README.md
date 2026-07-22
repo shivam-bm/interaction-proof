@@ -123,7 +123,7 @@ Use $interaction-proof to audit this drawer on iOS.
 Audit a journey:
 
 ```text
-Use $interaction-proof to test the create-lead journey, including errors,
+Use $interaction-proof to test a critical user journey, including errors,
 interruptions, accessibility, and recovery.
 ```
 
