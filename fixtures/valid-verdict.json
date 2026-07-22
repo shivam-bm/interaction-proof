@@ -1,0 +1,77 @@
+{
+  "version": "1.0",
+  "audit": {
+    "scope": "surface",
+    "target": "Account drawer",
+    "proofTarget": "DEVICE"
+  },
+  "environment": {
+    "platform": "ios",
+    "device": "iPhone 15 Pro",
+    "osVersion": "unknown",
+    "buildType": "release",
+    "revision": "fixture"
+  },
+  "ledger": [
+    {
+      "id": "drawer-open-pan",
+      "claimType": "runtime",
+      "claim": "The drawer tracks the opening gesture continuously.",
+      "expected": "The drawer remains attached to the gesture.",
+      "observed": "The drawer remained attached in all fixture runs.",
+      "status": "PASS",
+      "proofLevel": "DEVICE",
+      "environmentId": "ios-primary",
+      "evidence": [
+        "fixtures/artifacts/drawer-open.mov"
+      ],
+      "reproduction": [
+        "Launch the release build",
+        "Open Home",
+        "Pan from the leading edge"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "drawer-hidden-confirmation",
+      "claimType": "source",
+      "claim": "The confirmation renders above the drawer host.",
+      "expected": "The confirmation host is above the drawer portal.",
+      "observed": "The confirmation is mounted beneath the native modal host.",
+      "status": "FAIL",
+      "proofLevel": "SOURCE",
+      "environmentId": "source-tree",
+      "evidence": [
+        "src/account-drawer.tsx:88"
+      ],
+      "reproduction": [
+        "Inspect the drawer and confirmation hosts"
+      ],
+      "severity": "HIGH",
+      "confidence": "medium"
+    },
+    {
+      "id": "drawer-label-comprehension",
+      "claimType": "human",
+      "claim": "People understand the drawer action labels.",
+      "expected": "Target participants predict each action correctly.",
+      "observed": "No participant evidence was supplied.",
+      "status": "HUMAN_STUDY_REQUIRED",
+      "proofLevel": "SOURCE",
+      "environmentId": "research-gap",
+      "evidence": [],
+      "reproduction": [
+        "Run a comprehension study with the target population"
+      ],
+      "studyQuestion": "Can target participants predict the result of each drawer action?",
+      "confidence": "high"
+    }
+  ],
+  "summary": {
+    "PASS": 1,
+    "FAIL": 1,
+    "BLOCKED": 0,
+    "NOT_APPLICABLE": 0,
+    "HUMAN_STUDY_REQUIRED": 1
+  }
+}

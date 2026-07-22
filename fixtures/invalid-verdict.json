@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "audit": {
+    "scope": "interaction",
+    "target": "Drawer gesture",
+    "proofTarget": "DEVICE"
+  },
+  "environment": {
+    "platform": "ios",
+    "device": "unknown",
+    "osVersion": "unknown",
+    "buildType": "unknown",
+    "revision": "fixture"
+  },
+  "ledger": [
+    {
+      "id": "drawer-open-pan",
+      "claimType": "runtime",
+      "claim": "The drawer opens smoothly.",
+      "expected": "The drawer remains attached to the gesture.",
+      "observed": "The source uses Reanimated.",
+      "status": "PASS",
+      "proofLevel": "SOURCE",
+      "environmentId": "source-tree",
+      "evidence": [],
+      "reproduction": [],
+      "confidence": "high"
+    }
+  ],
+  "summary": {
+    "PASS": 0,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "NOT_APPLICABLE": 0,
+    "HUMAN_STUDY_REQUIRED": 0
+  }
+}

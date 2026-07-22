@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interaction Proof"
+  short_description: "Evidence-driven mobile interaction audits"
+  default_prompt: "Use $interaction-proof to audit this mobile interaction and issue only evidence-backed verdicts."

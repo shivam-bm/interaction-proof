@@ -1,0 +1,3 @@
+Contact jane@example.com with Authorization: Bearer abc.def.ghi
+api_key="super-secret-value"
+callback=https://example.com/callback?token=visible-token&mode=test

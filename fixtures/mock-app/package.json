@@ -1,0 +1,12 @@
+{
+  "name": "interaction-proof-mock-app",
+  "private": true,
+  "dependencies": {
+    "expo": "~55.0.0",
+    "expo-router": "~7.0.0",
+    "react": "19.2.0",
+    "react-native": "0.83.0",
+    "react-native-gesture-handler": "~2.30.0",
+    "react-native-reanimated": "~4.3.0"
+  }
+}
