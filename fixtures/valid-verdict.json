@@ -3,25 +3,78 @@
   "audit": {
     "scope": "surface",
     "target": "Account drawer",
-    "proofTarget": "DEVICE"
+    "proofTarget": "DEVICE",
+    "status": "FAIL"
   },
-  "environment": {
-    "platform": "ios",
-    "device": "iPhone 15 Pro",
-    "osVersion": "unknown",
-    "buildType": "release",
-    "revision": "fixture"
-  },
+  "environments": [
+    {
+      "id": "ios-primary",
+      "platform": "ios",
+      "device": "iPhone 15 Pro",
+      "osVersion": "unknown",
+      "buildType": "release",
+      "revision": "fixture",
+      "refreshRate": "120 Hz",
+      "dataState": "seeded account",
+      "networkState": "normal",
+      "locale": "en-US",
+      "appearance": "light",
+      "accessibilitySettings": "default",
+      "riskRationale": "Primary high-refresh iOS interaction environment"
+    },
+    {
+      "id": "source-tree",
+      "platform": "shared-source",
+      "device": "not applicable",
+      "osVersion": "not applicable",
+      "buildType": "source inspection",
+      "revision": "fixture",
+      "refreshRate": "not applicable",
+      "dataState": "fixture",
+      "networkState": "not applicable",
+      "locale": "not applicable",
+      "appearance": "not applicable",
+      "accessibilitySettings": "not applicable",
+      "riskRationale": "Source host ordering can be resolved without runtime evidence"
+    },
+    {
+      "id": "research-gap",
+      "platform": "human study",
+      "device": "unknown",
+      "osVersion": "unknown",
+      "buildType": "unknown",
+      "revision": "fixture",
+      "refreshRate": "unknown",
+      "dataState": "unknown",
+      "networkState": "unknown",
+      "locale": "en-US",
+      "appearance": "unknown",
+      "accessibilitySettings": "unknown",
+      "riskRationale": "Human comprehension requires participant evidence"
+    }
+  ],
   "ledger": [
     {
       "id": "drawer-open-pan",
+      "domain": "gesture",
       "claimType": "runtime",
+      "critical": true,
+      "person": "Signed-in field representative",
+      "task": "Open the account drawer",
+      "entryState": "Home is interactive and the drawer is closed",
+      "action": "Pan from the leading edge",
+      "feedback": "The drawer begins tracking the pan",
+      "completion": "The drawer settles fully open",
+      "cancellation": "Reversing the pan returns the drawer closed",
+      "recovery": "A cancelled gesture leaves Home interactive",
+      "alternative": "Activate the labeled account button",
+      "environmentId": "ios-primary",
       "claim": "The drawer tracks the opening gesture continuously.",
       "expected": "The drawer remains attached to the gesture.",
       "observed": "The drawer remained attached in all fixture runs.",
       "status": "PASS",
+      "proofTarget": "DEVICE",
       "proofLevel": "DEVICE",
-      "environmentId": "ios-primary",
       "evidence": [
         "fixtures/artifacts/drawer-open.mov"
       ],
@@ -34,13 +87,25 @@
     },
     {
       "id": "drawer-hidden-confirmation",
+      "domain": "system",
       "claimType": "source",
-      "claim": "The confirmation renders above the drawer host.",
+      "critical": true,
+      "person": "Signed-in field representative",
+      "task": "Confirm a destructive drawer action",
+      "entryState": "The account drawer is open",
+      "action": "Activate the destructive action",
+      "feedback": "A confirmation presentation is requested",
+      "completion": "The confirmation appears above the drawer",
+      "cancellation": "Cancel returns focus to the drawer",
+      "recovery": "A failed presentation leaves the drawer usable",
+      "alternative": "Use the equivalent accessible action",
+      "environmentId": "source-tree",
+      "claim": "The confirmation host is mounted above the drawer host.",
       "expected": "The confirmation host is above the drawer portal.",
       "observed": "The confirmation is mounted beneath the native modal host.",
       "status": "FAIL",
+      "proofTarget": "SOURCE",
       "proofLevel": "SOURCE",
-      "environmentId": "source-tree",
       "evidence": [
         "src/account-drawer.tsx:88"
       ],
@@ -52,13 +117,25 @@
     },
     {
       "id": "drawer-label-comprehension",
+      "domain": "task",
       "claimType": "human",
+      "critical": false,
+      "person": "Target study participant",
+      "task": "Predict the result of each drawer action",
+      "entryState": "The account drawer is open",
+      "action": "Review each action label",
+      "feedback": "The interface presents the action labels",
+      "completion": "The participant states a predicted result",
+      "cancellation": "The participant can skip an action",
+      "recovery": "The facilitator records uncertainty without prompting",
+      "alternative": "The study includes screen-reader users",
+      "environmentId": "research-gap",
       "claim": "People understand the drawer action labels.",
       "expected": "Target participants predict each action correctly.",
       "observed": "No participant evidence was supplied.",
       "status": "HUMAN_STUDY_REQUIRED",
+      "proofTarget": "FIELD",
       "proofLevel": "SOURCE",
-      "environmentId": "research-gap",
       "evidence": [],
       "reproduction": [
         "Run a comprehension study with the target population"
@@ -67,6 +144,23 @@
       "confidence": "high"
     }
   ],
+  "coverage": {
+    "excludedDomains": [
+      { "domain": "navigation", "reason": "The bounded drawer audit does not change routes" },
+      { "domain": "motion", "reason": "Gesture continuity is represented by the gesture claim" },
+      { "domain": "responsiveness", "reason": "No timing budget is part of this fixture" },
+      { "domain": "accessibility", "reason": "Accessibility behavior is outside this fixture" },
+      { "domain": "adaptation", "reason": "The fixture targets one fixed layout" },
+      { "domain": "feedback", "reason": "Feedback is represented inside the gesture claim" },
+      { "domain": "resilience", "reason": "No asynchronous or failure state is in scope" },
+      { "domain": "localization", "reason": "The fixture targets en-US only" },
+      { "domain": "privacy", "reason": "No personal or sensitive content is presented" },
+      { "domain": "resources", "reason": "Resource behavior is outside this fixture" }
+    ],
+    "excludedEnvironments": [
+      { "combination": "Android devices", "reason": "The fixture is an iOS account-drawer audit" }
+    ]
+  },
   "summary": {
     "PASS": 1,
     "FAIL": 1,

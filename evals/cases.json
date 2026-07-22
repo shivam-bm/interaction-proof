@@ -1,0 +1,26 @@
+[
+  {
+    "id": "drawer-drag-source-only",
+    "scope": "interaction",
+    "artifact": "fixtures/evals/interaction.md",
+    "prompt": "Use $interaction-proof to audit whether the Profile drawer remains attached to its opening drag. Use only the supplied artifact and return a structured JSON verdict."
+  },
+  {
+    "id": "account-sheet-simulator",
+    "scope": "surface",
+    "artifact": "fixtures/evals/surface.md",
+    "prompt": "Use $interaction-proof to audit the Account sheet surface on iOS. Use only the supplied artifact and return a structured JSON verdict."
+  },
+  {
+    "id": "add-customer-cross-screen",
+    "scope": "journey",
+    "artifact": "fixtures/evals/journey.md",
+    "prompt": "Use $interaction-proof to audit the Add Customer journey across its screens. Use only the supplied artifact and return a structured JSON verdict."
+  },
+  {
+    "id": "mobile-release-matrix",
+    "scope": "release",
+    "artifact": "fixtures/evals/release.md",
+    "prompt": "Use $interaction-proof to issue a pre-release interaction-quality verdict for the supplied Apple and Android evidence matrix. Use only the supplied artifact and return a structured JSON verdict."
+  }
+]

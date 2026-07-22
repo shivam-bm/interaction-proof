@@ -36,7 +36,7 @@ Runtime passes require runtime evidence. Human questions such as comprehension, 
 
 ## Status
 
-Version `0.1.0` is intended for internal use and public evaluation. Apple platforms and React Native/Expo are the first validation focus. Android guidance is included but should be treated as provisional until equivalent fixture and device coverage is complete.
+Version `0.2.0` is standards-ready for internal use and public evaluation. Apple platforms and React Native/Expo are the first runtime-validation focus. Android guidance remains provisional until equivalent physical-device coverage is complete.
 
 ## Validate
 
@@ -46,7 +46,7 @@ npm test
 python3 /path/to/skill-creator/scripts/quick_validate.py skills/interaction-proof
 ```
 
-The repository type-checks and tests the TypeScript utilities, skill structure, reference pointers, and seeded verdict fixtures. Direct TypeScript execution requires Node.js 22.18 or newer.
+The repository type-checks and tests the TypeScript utilities, canonical claim contract, proof compatibility, skill structure, reference pointers, seeded verdict fixtures, and forward-test cases for all four audit branches. Direct TypeScript execution requires Node.js 22.18 or newer.
 
 ## Privacy
 

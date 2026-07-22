@@ -3,30 +3,70 @@
   "audit": {
     "scope": "interaction",
     "target": "Drawer gesture",
-    "proofTarget": "DEVICE"
+    "proofTarget": "DEVICE",
+    "status": "PASS"
   },
-  "environment": {
-    "platform": "ios",
-    "device": "unknown",
-    "osVersion": "unknown",
-    "buildType": "unknown",
-    "revision": "fixture"
-  },
+  "environments": [
+    {
+      "id": "source-tree",
+      "platform": "ios",
+      "device": "unknown",
+      "osVersion": "unknown",
+      "buildType": "source inspection",
+      "revision": "fixture",
+      "refreshRate": "unknown",
+      "dataState": "fixture",
+      "networkState": "unknown",
+      "locale": "en-US",
+      "appearance": "light",
+      "accessibilitySettings": "default",
+      "riskRationale": "Source-only environment intentionally cannot prove runtime motion"
+    }
+  ],
   "ledger": [
     {
       "id": "drawer-open-pan",
+      "domain": "gesture",
       "claimType": "runtime",
+      "critical": true,
+      "person": "Signed-in field representative",
+      "task": "Open the drawer",
+      "entryState": "Home is interactive",
+      "action": "Pan from the leading edge",
+      "feedback": "The drawer begins moving",
+      "completion": "The drawer settles open",
+      "cancellation": "The reverse pan closes the drawer",
+      "recovery": "Home remains interactive",
+      "alternative": "Activate the account button",
+      "environmentId": "source-tree",
       "claim": "The drawer opens smoothly.",
       "expected": "The drawer remains attached to the gesture.",
       "observed": "The source uses Reanimated.",
       "status": "PASS",
+      "proofTarget": "DEVICE",
       "proofLevel": "SOURCE",
-      "environmentId": "source-tree",
       "evidence": [],
       "reproduction": [],
       "confidence": "high"
     }
   ],
+  "coverage": {
+    "excludedDomains": [
+      { "domain": "task", "reason": "Not part of the invalid fixture" },
+      { "domain": "navigation", "reason": "Not part of the invalid fixture" },
+      { "domain": "motion", "reason": "Not part of the invalid fixture" },
+      { "domain": "responsiveness", "reason": "Not part of the invalid fixture" },
+      { "domain": "accessibility", "reason": "Not part of the invalid fixture" },
+      { "domain": "adaptation", "reason": "Not part of the invalid fixture" },
+      { "domain": "system", "reason": "Not part of the invalid fixture" },
+      { "domain": "feedback", "reason": "Not part of the invalid fixture" },
+      { "domain": "resilience", "reason": "Not part of the invalid fixture" },
+      { "domain": "localization", "reason": "Not part of the invalid fixture" },
+      { "domain": "privacy", "reason": "Not part of the invalid fixture" },
+      { "domain": "resources", "reason": "Not part of the invalid fixture" }
+    ],
+    "excludedEnvironments": []
+  },
   "summary": {
     "PASS": 0,
     "FAIL": 0,

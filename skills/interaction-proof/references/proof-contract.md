@@ -1,47 +1,34 @@
 # Proof Contract
 
-Use this contract for every audit. It is the boundary between evidence and confidence theater.
+Apply this contract to every claim. It separates evidence from confidence theater.
 
 ## Claim types
 
-- `source`: implementation, configuration, dependency, or documented contract.
+- `source`: implementation, configuration, dependency, or documented-contract behavior.
 - `runtime`: behavior observed while the software runs.
 - `human`: comprehension, learnability, comfort, desirability, trust, or preference.
 
 ## Outcomes
 
-- `PASS`: the scoped claim holds at the stated proof rung.
-- `FAIL`: the scoped claim is contradicted by evidence.
-- `BLOCKED`: a named missing prerequisite prevents a verdict.
+- `PASS`: evidence meets or exceeds the claim's target rung and supports the expectation.
+- `FAIL`: evidence meets or exceeds the claim's target rung and contradicts the expectation.
+- `BLOCKED`: a named missing prerequisite prevents resolution.
 - `NOT_APPLICABLE`: the condition does not apply, with a reason.
 - `HUMAN_STUDY_REQUIRED`: observable evidence cannot answer the human question.
 
-Runtime passes require `RUN`, `DEVICE`, `TRACE`, or `FIELD`. Source evidence may identify a likely runtime failure, but reproduce it when the environment is available. Human claims require research evidence; screenshots and agent preference do not substitute for people.
+Resolved runtime claims use `RUN`, `DEVICE`, `TRACE`, or `FIELD`. Source evidence can resolve source claims and can narrow a runtime hypothesis; keep the runtime claim `BLOCKED` until runtime evidence exists. Human claims use `HUMAN_STUDY_REQUIRED` until research evidence exists.
 
-## Required claim record
+Every `PASS` or `FAIL` meets its per-claim `proofTarget`. Every evidence identifier points to an artifact or exact source location. Every environment identifier resolves to a pinned environment record. Every claim includes a reproducible step or protocol.
 
-Record:
-
-1. Stable identifier.
-2. Claim type.
-3. Expected behavior and its source.
-4. Observed behavior.
-5. Outcome.
-6. Proof rung.
-7. Environment identifier.
-8. Evidence artifacts.
-9. Reproduction steps.
-10. Severity for failures.
-11. Confidence.
-12. Blocker, exclusion reason, or human-study question when applicable.
+Use the canonical claim fields in [coverage-ledger.md](coverage-ledger.md) and the representations in [verdict-format.md](verdict-format.md).
 
 ## Confidence
 
 - `high`: direct, repeatable evidence in the target environment.
 - `medium`: direct evidence with a material environment mismatch or limited repetitions.
-- `low`: indirect evidence that narrows the hypothesis but does not settle it.
+- `low`: indirect evidence that narrows the hypothesis without settling it.
 
-Lower confidence instead of overstating the claim. When evidence conflicts, preserve both artifacts and prefer the evidence closest to the target runtime.
+Lower confidence when evidence weakens. When evidence conflicts, preserve both artifacts and prefer the evidence closest to the target runtime.
 
 ## Severity
 
@@ -52,17 +39,17 @@ Assess four dimensions independently:
 - **Reproducibility:** consistency under the pinned protocol.
 - **Confidence:** strength of the proof.
 
-Issue one level:
+Issue one level for `FAIL`:
 
 - `BLOCKER`: crash, data loss, essential task failure, or essential accessibility path unavailable.
 - `HIGH`: a common or important task is materially impaired.
 - `MEDIUM`: recoverable friction, inconsistent feedback, or a meaningful platform regression.
 - `LOW`: bounded polish defect with limited task impact.
 
-Use `HUMAN_STUDY_REQUIRED`, not severity, for unanswered human questions.
+Use `HUMAN_STUDY_REQUIRED` for unanswered human questions.
 
 ## Human-study boundary
 
-Agents can observe task completion, timing, state, semantics, feedback, resource use, and accessibility exposure. People must settle comprehension, discoverability, perceived trust, comfort, delight, preference, and whether the product solves the right problem.
+Agents can observe task completion, timing, state, semantics, feedback, resource use, and accessibility exposure. People settle comprehension, discoverability, perceived trust, comfort, delight, preference, and whether the product solves the right problem.
 
-Turn a human question into a study handoff containing the target population, task, hypothesis, success signal, environment, and artifacts already gathered.
+Turn a human question into a handoff containing the target population, task, hypothesis, success signal, environment, and gathered artifacts.

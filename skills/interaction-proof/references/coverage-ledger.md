@@ -1,33 +1,42 @@
 # Coverage Ledger
 
-The ledger makes coverage explicit before the audit begins.
+The ledger makes coverage explicit before evidence collection. Use one canonical claim record for planning, proof, and verdicts.
 
-## Scopes
+## Claim record
 
-- **Interaction:** one action and its feedback loop.
-- **Surface:** every meaningful interaction and state on one rendered surface.
-- **Journey:** the entry, decisions, transitions, completion, interruption, and recovery of one task.
-- **Release:** critical journeys across a risk-based environment matrix.
+Create one record per claim and environment condition:
 
-## Ledger fields
-
-Create one row per claim or environment condition:
-
-| Field | Question |
+| Field | Requirement |
 | --- | --- |
-| Person | Who performs the task, with what capability or role? |
-| Task | What concrete outcome are they pursuing? |
-| Entry state | What must already be true? |
-| Action | What input starts or advances the interaction? |
-| Feedback | What immediate acknowledgement appears? |
-| Completion | How does the person know the action finished? |
-| Cancellation | Can the action be interrupted or reversed safely? |
-| Recovery | What happens after failure, denial, backgrounding, or retry? |
-| Alternative | Can essential functionality be reached through another input mode? |
-| Environment | Which platform, device, state, locale, and settings apply? |
-| Expected | What source defines correct behavior? |
-| Proof target | Which rung is required? |
-| Outcome | What did the audit establish? |
+| `id` | Stable unique identifier. |
+| `domain` | One experience domain from the list below. |
+| `claimType` | `source`, `runtime`, or `human`. |
+| `critical` | Whether blocking or failing this claim prevents release. |
+| `person` | Person, capability, or role performing the task. |
+| `task` | Concrete outcome the person pursues. |
+| `entryState` | Preconditions before the action. |
+| `action` | Input that starts or advances the interaction. |
+| `feedback` | Immediate acknowledgement. |
+| `completion` | Observable completion signal. |
+| `cancellation` | Interruption or reversal behavior. |
+| `recovery` | Behavior after failure, denial, backgrounding, or retry. |
+| `alternative` | Equivalent route through another input mode. |
+| `environmentId` | Identifier from the report's environment matrix. |
+| `claim` | One falsifiable statement. |
+| `expected` | Correct behavior and its source. |
+| `observed` | Direct observation, kept separate from interpretation. |
+| `status` | One outcome from the proof contract. |
+| `proofTarget` | Minimum evidence rung needed for this claim. |
+| `proofLevel` | Evidence rung actually achieved. |
+| `evidence` | Stable artifact identifiers. |
+| `reproduction` | Exact steps or protocol. |
+| `confidence` | `high`, `medium`, or `low`. |
+
+Use a non-empty explanation such as `NOT_APPLICABLE — no dismissible state exists` for any interaction field that does not apply. Add `severity`, `blocker`, `reason`, or `studyQuestion` when the selected outcome requires it.
+
+Each environment record includes a `riskRationale`. Put omitted domains in `coverage.excludedDomains` and omitted device, state, or platform combinations in `coverage.excludedEnvironments`; every exclusion carries a reason.
+
+Pass selected domain IDs to `create-ledger.ts --domains task,gesture,...`; the generator creates claim starters for those domains and exclusion-rationale placeholders for the rest.
 
 ## Experience domains
 
@@ -49,10 +58,10 @@ Account for each applicable domain:
 
 ## Risk selection
 
-Prioritize combinations with high task importance, broad reach, fragile implementation, recent change, known incident history, weak hardware, constrained layouts, assistive technology, or destructive consequences.
+Prioritize combinations with high task importance, broad reach, fragile implementation, recent change, incident history, weak hardware, constrained layouts, assistive technology, or destructive consequences.
 
-For every excluded combination, record why a neighboring result is representative. Sampling without a rationale is missing coverage.
+Record why each excluded combination is represented by neighboring evidence. Sampling without a rationale remains uncovered.
 
 ## Completion test
 
-Coverage is complete when every in-scope row has an outcome and every omitted domain or environment has an explicit exclusion rationale. A release audit cannot pass while critical rows remain `BLOCKED`.
+Coverage is complete when every in-scope record has a final outcome and every omitted domain or environment has an exclusion rationale. A release audit cannot pass while a critical record remains `BLOCKED` or `FAIL`.
